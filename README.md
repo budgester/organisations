@@ -2,6 +2,10 @@
 
 A FastAPI application that provides a REST API for managing organisations.
 
+## Live Demo
+
+https://organisations-withered-water-4211.fly.dev/
+
 ## Features
 
 - GET `/organisations` - Returns a JSON list of organisations
