@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 app = FastAPI(
@@ -25,6 +26,12 @@ def load_organisations() -> list[Organisation]:
 
 
 organisations_db = load_organisations()
+
+
+@app.get("/")
+def root():
+    """Redirect to organisations endpoint."""
+    return RedirectResponse(url="/organisations")
 
 
 @app.get("/organisations", response_model=list[Organisation])
