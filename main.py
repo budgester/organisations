@@ -51,10 +51,13 @@ def root():
             th.desc::after {{ content: ' ↓'; opacity: 1; }}
             tr:nth-child(even) {{ background-color: #f2f2f2; }}
             tr:hover {{ background-color: #ddd; }}
+            #searchBox {{ width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }}
+            #searchBox:focus {{ outline: none; border-color: #4CAF50; }}
         </style>
     </head>
     <body>
         <h1>Organisations</h1>
+        <input type="text" id="searchBox" onkeyup="filterTable()" placeholder="Search organisations...">
         <table id="orgTable">
             <thead>
                 <tr><th onclick="sortTable(0)">ID</th><th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">Description</th></tr>
@@ -96,6 +99,17 @@ def root():
 
                 sortDirection[colIndex] = !sortDirection[colIndex];
                 rows.forEach(row => tbody.appendChild(row));
+            }}
+
+            function filterTable() {{
+                const query = document.getElementById("searchBox").value.toLowerCase();
+                const tbody = document.getElementById("orgTable").querySelector("tbody");
+                const rows = tbody.querySelectorAll("tr");
+
+                rows.forEach(row => {{
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? "" : "none";
+                }});
             }}
         </script>
     </body>
