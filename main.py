@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -46,3 +46,13 @@ def root(request: Request):
 def get_organisations():
     """Retrieve a list of all organisations."""
     return organisations_db
+
+
+@app.get("/organisations/{acronym}", response_model=Organisation)
+def get_organisation_by_acronym(acronym: str):
+    """Retrieve an organisation by its acronym."""
+    acronym_upper = acronym.upper()
+    for org in organisations_db:
+        if org.acronym == acronym_upper:
+            return org
+    raise HTTPException(status_code=404, detail=f"Organisation with acronym '{acronym_upper}' not found")
