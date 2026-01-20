@@ -13,8 +13,14 @@
         th.desc::after { content: ' ↓'; opacity: 1; }
         tr:nth-child(even) { background-color: #f2f2f2; }
         tr:hover { background-color: #ddd; }
-        #searchBox { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        #searchBox { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
         #searchBox:focus { outline: none; border-color: #4CAF50; }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; }
+        .pagination button { padding: 8px 16px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px; }
+        .pagination button:hover:not(:disabled) { background-color: #4CAF50; color: white; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .page-info { color: #666; }
     </style>
 </head>
 <body>
@@ -38,18 +44,68 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="pagination">
+        <button onclick="firstPage()">« First</button>
+        <button onclick="prevPage()">‹ Prev</button>
+        <span class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+        <button onclick="nextPage()">Next ›</button>
+        <button onclick="lastPage()">Last »</button>
+        <select id="pageSize" onchange="changePageSize()">
+            <option value="10">10 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+        </select>
+    </div>
     <p>
         <a href="/docs">API Documentation</a> |
         <a href="https://github.com/budgester/organisations">GitHub</a>
     </p>
     <script>
+        let currentPage = 1;
+        let pageSize = 10;
         let sortDirection = [true, true, true];
-        function sortTable(colIndex) {
-            const table = document.getElementById("orgTable");
-            const tbody = table.querySelector("tbody");
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-            const headers = table.querySelectorAll("th");
+        let allRows = [];
+        let filteredRows = [];
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const tbody = document.getElementById("orgTable").querySelector("tbody");
+            allRows = Array.from(tbody.querySelectorAll("tr"));
+            filteredRows = [...allRows];
+            updatePagination();
+        });
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            document.getElementById("currentPage").textContent = currentPage;
+            document.getElementById("totalPages").textContent = totalPages;
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+
+            allRows.forEach(row => row.style.display = "none");
+            filteredRows.slice(start, end).forEach(row => row.style.display = "");
+
+            const buttons = document.querySelectorAll(".pagination button");
+            buttons[0].disabled = buttons[1].disabled = currentPage === 1;
+            buttons[2].disabled = buttons[3].disabled = currentPage === totalPages;
+        }
+
+        function firstPage() { currentPage = 1; updatePagination(); }
+        function prevPage() { currentPage--; updatePagination(); }
+        function nextPage() { currentPage++; updatePagination(); }
+        function lastPage() { currentPage = Math.ceil(filteredRows.length / pageSize); updatePagination(); }
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById("pageSize").value);
+            currentPage = 1;
+            updatePagination();
+        }
+
+        function sortTable(colIndex) {
+            const headers = document.querySelectorAll("th");
             headers.forEach((h, i) => {
                 h.classList.remove("asc", "desc");
                 if (i === colIndex) {
@@ -57,7 +113,7 @@
                 }
             });
 
-            rows.sort((a, b) => {
+            filteredRows.sort((a, b) => {
                 let aVal = a.cells[colIndex].textContent;
                 let bVal = b.cells[colIndex].textContent;
                 if (colIndex === 0) {
@@ -70,18 +126,17 @@
             });
 
             sortDirection[colIndex] = !sortDirection[colIndex];
-            rows.forEach(row => tbody.appendChild(row));
+            const tbody = document.getElementById("orgTable").querySelector("tbody");
+            filteredRows.forEach(row => tbody.appendChild(row));
+            currentPage = 1;
+            updatePagination();
         }
 
         function filterTable() {
             const query = document.getElementById("searchBox").value.toLowerCase();
-            const tbody = document.getElementById("orgTable").querySelector("tbody");
-            const rows = tbody.querySelectorAll("tr");
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(query) ? "" : "none";
-            });
+            filteredRows = allRows.filter(row => row.textContent.toLowerCase().includes(query));
+            currentPage = 1;
+            updatePagination();
         }
     </script>
 </body>
