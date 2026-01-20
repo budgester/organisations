@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -14,12 +17,14 @@ class Organisation(BaseModel):
     description: str | None = None
 
 
-# Sample data
-organisations_db = [
-    Organisation(id=1, name="Acme Corp", description="A technology company"),
-    Organisation(id=2, name="Global Industries", description="Manufacturing and logistics"),
-    Organisation(id=3, name="Tech Solutions", description="Software development services"),
-]
+def load_organisations() -> list[Organisation]:
+    data_file = Path(__file__).parent / "data" / "organisations.json"
+    with open(data_file) as f:
+        data = json.load(f)
+    return [Organisation(**org) for org in data]
+
+
+organisations_db = load_organisations()
 
 
 @app.get("/organisations", response_model=list[Organisation])

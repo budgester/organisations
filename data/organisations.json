@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "Acme Corp",
+    "description": "A technology company"
+  },
+  {
+    "id": 2,
+    "name": "Global Industries",
+    "description": "Manufacturing and logistics"
+  },
+  {
+    "id": 3,
+    "name": "Tech Solutions",
+    "description": "Software development services"
+  }
+]
