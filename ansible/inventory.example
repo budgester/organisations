@@ -1,0 +1,5 @@
+[organisations]
+server1.example.com ansible_user=deploy
+
+[organisations:vars]
+ansible_python_interpreter=/usr/bin/python3
