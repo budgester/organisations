@@ -18,6 +18,7 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 class Organisation(BaseModel):
     id: int
     name: str
+    acronym: str
     description: str | None = None
 
 
