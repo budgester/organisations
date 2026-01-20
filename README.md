@@ -26,6 +26,13 @@ Access the API:
 - API endpoint: http://127.0.0.1:8000/organisations
 - Swagger UI: http://127.0.0.1:8000/docs
 
+## Testing
+
+```bash
+pip install pytest httpx
+pytest -v
+```
+
 ## Example Response
 
 ```json
