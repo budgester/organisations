@@ -55,7 +55,10 @@ def root():
             <tr><th>ID</th><th>Name</th><th>Description</th></tr>
             {rows}
         </table>
-        <p><a href="/docs">API Documentation</a></p>
+        <p>
+            <a href="/docs">API Documentation</a> |
+            <a href="https://github.com/budgester/organisations">GitHub</a>
+        </p>
     </body>
     </html>
     """
