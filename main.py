@@ -19,6 +19,7 @@ class Organisation(BaseModel):
     id: int
     name: str
     acronym: str
+    owner: str
     description: str | None = None
 
 

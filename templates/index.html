@@ -32,7 +32,8 @@
                 <th onclick="sortTable(0)">ID</th>
                 <th onclick="sortTable(1)">Acronym</th>
                 <th onclick="sortTable(2)">Name</th>
-                <th onclick="sortTable(3)">Description</th>
+                <th onclick="sortTable(3)">Owner</th>
+                <th onclick="sortTable(4)">Description</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +42,7 @@
                 <td>{{ org.id }}</td>
                 <td>{{ org.acronym }}</td>
                 <td>{{ org.name }}</td>
+                <td><a href="mailto:{{ org.owner }}">{{ org.owner }}</a></td>
                 <td>{{ org.description or '' }}</td>
             </tr>
             {% endfor %}
@@ -66,7 +68,7 @@
     <script>
         let currentPage = 1;
         let pageSize = 10;
-        let sortDirection = [true, true, true, true];
+        let sortDirection = [true, true, true, true, true];
         let allRows = [];
         let filteredRows = [];
 
