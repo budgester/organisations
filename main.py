@@ -44,21 +44,60 @@ def root():
             body {{ font-family: sans-serif; margin: 40px; }}
             table {{ border-collapse: collapse; width: 100%; }}
             th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; }}
-            th {{ background-color: #4CAF50; color: white; }}
+            th {{ background-color: #4CAF50; color: white; cursor: pointer; }}
+            th:hover {{ background-color: #45a049; }}
+            th::after {{ content: ' ⇅'; opacity: 0.5; }}
+            th.asc::after {{ content: ' ↑'; opacity: 1; }}
+            th.desc::after {{ content: ' ↓'; opacity: 1; }}
             tr:nth-child(even) {{ background-color: #f2f2f2; }}
             tr:hover {{ background-color: #ddd; }}
         </style>
     </head>
     <body>
         <h1>Organisations</h1>
-        <table>
-            <tr><th>ID</th><th>Name</th><th>Description</th></tr>
-            {rows}
+        <table id="orgTable">
+            <thead>
+                <tr><th onclick="sortTable(0)">ID</th><th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">Description</th></tr>
+            </thead>
+            <tbody>
+                {rows}
+            </tbody>
         </table>
         <p>
             <a href="/docs">API Documentation</a> |
             <a href="https://github.com/budgester/organisations">GitHub</a>
         </p>
+        <script>
+            let sortDirection = [true, true, true];
+            function sortTable(colIndex) {{
+                const table = document.getElementById("orgTable");
+                const tbody = table.querySelector("tbody");
+                const rows = Array.from(tbody.querySelectorAll("tr"));
+                const headers = table.querySelectorAll("th");
+
+                headers.forEach((h, i) => {{
+                    h.classList.remove("asc", "desc");
+                    if (i === colIndex) {{
+                        h.classList.add(sortDirection[colIndex] ? "asc" : "desc");
+                    }}
+                }});
+
+                rows.sort((a, b) => {{
+                    let aVal = a.cells[colIndex].textContent;
+                    let bVal = b.cells[colIndex].textContent;
+                    if (colIndex === 0) {{
+                        aVal = parseInt(aVal);
+                        bVal = parseInt(bVal);
+                    }}
+                    if (aVal < bVal) return sortDirection[colIndex] ? -1 : 1;
+                    if (aVal > bVal) return sortDirection[colIndex] ? 1 : -1;
+                    return 0;
+                }});
+
+                sortDirection[colIndex] = !sortDirection[colIndex];
+                rows.forEach(row => tbody.appendChild(row));
+            }}
+        </script>
     </body>
     </html>
     """
